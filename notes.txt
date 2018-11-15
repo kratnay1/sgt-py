@@ -1,0 +1,12 @@
+- is S normal in Gamma? 
+- G = Gamma/Sigma = B semidirect S
+- G = Gamma/Sigma = S semidirect B
+
+- can we find a B*S=G, even without either being normal
+
+- nested decomposition: G = B1 semidirect (B2 semidirect S)
+
+- coarser lattice: G = BXS, where X is pure translation grp
+
+
+
