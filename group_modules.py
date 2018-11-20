@@ -125,8 +125,15 @@ def getRow(str):
     return row
 
 
+# :math:`{\cal H}(A,{\bf a}) = \left(\begin{array}{ccc}
+# A && {\bf a} \\ \\
+# {\bf 0}^t && 1 \end{array}\right)' 
+
 # loads a group as a 3d array of 4x4 matrices
 def loadGroup(filename):
+   """Loads an n-element finite group as an numpy.ndarray with shape (4,4,n).  Each group element is represented as a 4x4 homogenous matrix of the form
+    :param filename: test
+    """
     with open(filename) as file:
         A = [line.split() for line in file]
     G = np.zeros((4, 4, len(A)))
