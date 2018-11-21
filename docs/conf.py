@@ -17,6 +17,18 @@ import sys
 sys.path.insert(0, os.path.abspath('../'))
 
 
+import sys
+from unittest.mock import MagicMock
+
+class Mock(MagicMock):
+    @classmethod
+        def __getattr__(cls, name):
+            return MagicMock()
+
+MOCK_MODULES = ['pygtk', 'gtk', 'gobject', 'argparse', 'numpy', 'pandas']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+
 # -- Project information -----------------------------------------------------
 
 project = u'Sgt-Py'
