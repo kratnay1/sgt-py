@@ -16,17 +16,17 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
 
+# from unittest.mock import MagicMock
 
-import sys
-from unittest.mock import MagicMock
+# class Mock(MagicMock):
+#    @classmethod
+#       def __getattr__(cls, name):
+#          return MagicMock()
 
-class Mock(MagicMock):
-    @classmethod
-        def __getattr__(cls, name):
-            return MagicMock()
+# MOCK_MODULES = ['numpy', 'pandas', 're', 'requests', 'math', 'operator', 'fractions']
+# sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
-MOCK_MODULES = ['pygtk', 'gtk', 'gobject', 'argparse', 'numpy', 'pandas']
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+autodoc_moc_imports = ['numpy', 'pandas', 're', 'requests', 'math', 'operator', 'fractions']
 
 
 # -- Project information -----------------------------------------------------
