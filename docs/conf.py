@@ -53,6 +53,7 @@ release = u'0.0.1'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.imgmath'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -164,7 +165,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'Sgt-Py', u'Sgt-Py Documentation',
-     author, 'Sgt-Py', 'One line description of project.',
+     author, 'Sgt-Py', 'Space group theory for python via the Bilbao Crystallographic Server.',
      'Miscellaneous'),
 ]
 
