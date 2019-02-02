@@ -6,11 +6,11 @@ import math
 import os
 import itertools
 import requests
-# import asyncio
-# import async_timeout
-# import aiohttp
-# import aiofiles
-# from bs4 import BeautifulSoup
+import asyncio
+import async_timeout
+import aiohttp
+import aiofiles
+from bs4 import BeautifulSoup
 import operator as op
 import numpy as np
 from functools import reduce

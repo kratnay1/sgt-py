@@ -1,3 +1,6 @@
 numpy
 asyncio
+async_timeout
+aiohttp
+aiofiles
 bs4
