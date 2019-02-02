@@ -132,23 +132,23 @@ def ensure_all_futures(supergroup, urls, loop):
     with aiohttp.ClientSession(loop=loop) as session:
         return [asyncio.ensure_future(download_coroutine(supergroup, session, loop, url)) for url in urls]
 
-async def download_coroutine(supergroup, session, loop, url):
-    """download_coroutine testing an async function doc!!
+# async def download_coroutine(supergroup, session, loop, url):
+#     """download_coroutine testing an async function doc!!
 
-    :param supergroup:
-    :param session:
-    :param loop:
-    :param url:
-    """
-    with aiohttp.ClientSession(loop=loop) as session:
-        with async_timeout.timeout(None):
-            async with session.get(url) as response:
-                text = await response.text()
-                soup = BeautifulSoup(text, 'html5lib')
-                matrix_links = soup.find_all('a')[4:-3]
-                if matrix_links:
-                    async with aiofiles.open('subgroup_chains/matrix_urls_{}.dat'.format(supergroup), 'a') as fd:
-                        [await fd.write('http://www.cryst.ehu.es/cgi-bin/cryst/programs/' + link['href'] +'\n') for link in matrix_links]
+#     :param supergroup:
+#     :param session:
+#     :param loop:
+#     :param url:
+#     """
+#     with aiohttp.ClientSession(loop=loop) as session:
+#         with async_timeout.timeout(None):
+#             async with session.get(url) as response:
+#                 text = await response.text()
+#                 soup = BeautifulSoup(text, 'html5lib')
+#                 matrix_links = soup.find_all('a')[4:-3]
+#                 if matrix_links:
+#                     async with aiofiles.open('subgroup_chains/matrix_urls_{}.dat'.format(supergroup), 'a') as fd:
+#                         [await fd.write('http://www.cryst.ehu.es/cgi-bin/cryst/programs/' + link['href'] +'\n') for link in matrix_links]
 
 def get_matrix_urls(supergroup, urls):
     dirname = 'subgroup_chains'
