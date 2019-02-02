@@ -24,7 +24,7 @@ Indices and tables
 Group Theory Modules
 
 .. automodule:: group_modules
-   :members: loadGroup
+   :members: loadGroup, loadCosetRep
 
 ===============================
 

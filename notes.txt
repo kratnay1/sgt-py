@@ -8,5 +8,21 @@
 
 - coarser lattice: G = BXS, where X is pure translation grp
 
+Module overview: 
+
+SpaceGroup class (num, matrix, (opt)index, (opt)supergroup, (opt)infile)
+instance variables:
+- num
+- matrix
+- (opt) index
+- (opt) supergroup num
+- (opt) gen pos file (so it can be loaded)
+
+methods:
+- get_num
+- get_matrix
+- get_supergroup
+- get_index
+- 
 
 

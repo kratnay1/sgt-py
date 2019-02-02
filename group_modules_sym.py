@@ -12,7 +12,9 @@ from itertools import zip_longest
 from os import listdir
 
 
+        # 
 class Group:
+    """Group"""
     def __init__(self, num, matrix, index=None):
         # num: ITA number
         # matrix: transformation matrix

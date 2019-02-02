@@ -3,20 +3,30 @@
 import sys
 import re
 import math
+import os
+import itertools
 import requests
+# import asyncio
+# import async_timeout
+# import aiohttp
+# import aiofiles
+# from bs4 import BeautifulSoup
 import operator as op
 import numpy as np
+from functools import reduce
 from numpy import linalg as LA
 from fractions import Fraction
 
 
 class Group:
-    def __init__(self, num, matrix, index=None):
+    def __init__(self, num, matrix, index=None, supergroup=None, lin_rep=None):
         # num: ITA number
         # matrix: transformation matrix
         self.num = num
         self.matrix = matrix
         self.index = index
+        self.supergroup = supergroup
+        self.lin_rep = lin_rep
 
 class Subgroup:
     def __init__(self, num, normal=True, symmorphic=True):
@@ -84,7 +94,96 @@ class TableEntry:
 
 
 
-        
+def get_space_subgroups(supergroup, subgroup, index=None):
+    urls, indices = get_chain_urls(supergroup, subgroup, index)
+    matrix_urls = get_matrix_urls(supergroup, urls)
+    if matrix_urls == []:
+        if index:
+            raise ValueError('Bilbao Error: The group {} can not be related to the subgroup {} with index {}.'.format(supergroup, subgroup, index))
+        raise ValueError('Bilbao Error: This is not possible.')
+    get_matrices(supergroup, matrix_urls)
+    return get_subgroups('matrices/matrices_{}.dat'.format(supergroup), supergroup)
+    # return urls, matrix_urls, indices
+
+def get_chain_urls(supergroup, subgroup, index=None):
+    if index:
+        return ['http://www.cryst.ehu.es/cgi-bin/cryst/programs/nph-subggraph?super={}&sub={}&index={}'.format(supergroup, subgroup, index)], [index]
+    urls, indices = [], []
+    with open('dat_files/ind_T_gamma.dat', 'r') as file:
+        ind_T = int([line.strip() for i,line in enumerate(file) if i==int(supergroup)-1][0])
+    index = get_start_index(subgroup, ind_T)
+    while index < ind_T:
+        if ind_T % index:
+            index += 1
+            continue
+        urls.append('http://www.cryst.ehu.es/cgi-bin/cryst/programs/nph-subggraph?super={}&sub={}&index={}'.format(supergroup, subgroup, index))
+        indices.append(index)
+        index += 1
+    return urls, indices
+def get_start_index(subgroup, ind_T):
+    S = standardGenPos(subgroup)
+    start_index = ind_T / S.shape[2]
+    if start_index == 1: return 2
+    if int(start_index) == 0: return 2
+    return int(start_index)
+def ensure_all_futures(supergroup, urls, loop):
+    with aiohttp.ClientSession(loop=loop) as session:
+        return [asyncio.ensure_future(download_coroutine(supergroup, session, loop, url)) for url in urls]
+# async def download_coroutine(supergroup, session, loop, url):
+#     with aiohttp.ClientSession(loop=loop) as session:
+#         with async_timeout.timeout(None):
+#             async with session.get(url) as response:
+#                 text = await response.text()
+#                 soup = BeautifulSoup(text, 'html5lib')
+#                 matrix_links = soup.find_all('a')[4:-3]
+#                 if matrix_links:
+#                     async with aiofiles.open('subgroup_chains/matrix_urls_{}.dat'.format(supergroup), 'a') as fd:
+#                         [await fd.write('http://www.cryst.ehu.es/cgi-bin/cryst/programs/' + link['href'] +'\n') for link in matrix_links]
+def get_matrix_urls(supergroup, urls):
+    dirname = 'subgroup_chains'
+    filename = 'subgroup_chains/matrix_urls_{}.dat'.format(supergroup)
+    if os.path.isdir(dirname):
+        for fname in os.listdir(dirname):
+            file_path = os.path.join(dirname, fname)
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        os.removedirs(dirname)
+    os.makedirs(dirname)
+    open(filename, 'w').close()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(asyncio.wait(ensure_all_futures(supergroup, urls, loop)))
+    with open(filename, 'r') as file:
+        matrix_urls = [line.strip() for line in file]
+    os.remove(filename)
+    os.removedirs(dirname)
+    return matrix_urls
+def ensure_matrix_futures(supergroup, loop, matrix_urls):
+    with aiohttp.ClientSession(loop=loop) as session:
+        return [asyncio.ensure_future(download_matrices(supergroup, session, loop, url)) for url in matrix_urls]
+# async def download_matrices(supergroup, session, loop, url):
+#     with async_timeout.timeout(None):
+#         async with aiohttp.ClientSession(loop=loop) as session:
+#             async with session.get(url) as response:
+#                 text = await response.text()
+#                 matrices = format_matrix_text(text)
+#                 async with aiofiles.open('matrices/matrices_{}.dat'.format(supergroup), 'a') as fd:
+#                     await fd.write(matrices)
+def format_matrix_text(text):
+    soup = BeautifulSoup(text, 'html5lib')
+    text = soup.find('center').text.replace('\n\n', '\n')
+    text = re.sub('\n', lambda m,c=itertools.count():m.group() if next(c)%3 else '\n\n', text)
+    chain = text[:text.find('\n\n')]
+    indices = chain[chain.find('[')+1: -1]
+    index = str(int(reduce((lambda x,y: int(x)*int(y)), indices.split())))
+    snum = str(int(chain[:chain.find('[')].split()[-1]))
+    text = text.replace('\n\n', '\n\n{} {}\n'.format(snum, index))
+    return text[text.find('\n')+2: text.rfind('\n\n')+2]
+def get_matrices(supergroup, matrix_urls):
+    filename = 'matrices/matrices_{}.dat'.format(supergroup)
+    open(filename, 'w').close()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(asyncio.wait(ensure_matrix_futures(supergroup, loop, matrix_urls)))
+
 
 # helper function for loadGroup
 # sets the chosen column of the row depending on
@@ -125,12 +224,19 @@ def getRow(str):
     return row
 
 
-# :math:`{\cal H}(A,{\bf a}) = \left(\begin{array}{ccc}
-# A && {\bf a} \\ \\
-# {\bf 0}^t && 1 \end{array}\right)` 
+
+def cosetDecomp(supergroup, subgroup, mat=None, filename=None):
+    cosets = getCosets(supergroup, subgroup, mat, filename)
+    return loadGroup(filename, cosets)
+
+def standardGenPos(group, mat=None, filename=None):
+    cosets = getCosets(group, 1, mat, filename)
+    return loadGroup(filename, cosets)
+
 
 # loads a group as a 3d array of 4x4 matrices
-def loadGroup(filename):
+
+def loadGroup(filename=None, coset_text=None):
     """Loads an n-element finite group as an numpy.ndarray with shape (4,4,n).  Each group element is represented as a 4x4 homogenous matrix of the form 
         :math:`{\\cal H}(A, {\\bf a}) = \\left(\\begin{array}{ccc}
         A && {\\bf a} \\\ \\\
@@ -138,8 +244,11 @@ def loadGroup(filename):
 
     :param filename: test
     """
-    with open(filename) as file:
-        A = [line.split() for line in file]
+    if filename:
+        with open(filename) as file:
+            A = [line.split() for line in file]
+    if coset_text:
+        A = [coset.split() for coset in coset_text.split('\n')[:-1]]
     G = np.zeros((4, 4, len(A)))
     for i in range(len(A)):
         G[0,:,i] = getRow(A[i][0])
@@ -151,6 +260,10 @@ def loadGroup(filename):
 
 
 def loadCosetRep(rep):
+    """Loads a coset representative as a 4x4 homogenous matrix stored as a numpy.ndarray.
+
+    :param rep: A string containing the action on.
+    """
     g = np.zeros((4,4))
     g[0,:] = getRow(rep[0])
     g[1,:] = getRow(rep[1])
@@ -242,7 +355,7 @@ def id_matrix():
 #     return subgroups
 
 
-def get_subgroups(filename):
+def get_subgroups(filename, supergroup=None):
     # global biebGroups
     # biebGroups = loadBiebGroups()
     subgroups = []
@@ -255,8 +368,13 @@ def get_subgroups(filename):
             row1 = file.readline()
             row2 = file.readline()
             row3 = file.readline()
-            mat = row1 + row2 + row3
-            subgroups.append(Group(num, mat.split(), index))
+            matrix = row1 + row2 + row3
+            if supergroup:
+                matrix = matrix.split()
+                lin_rep = cosetDecomp(supergroup, num, matrix)
+                subgroups.append(Group(num, matrix, index, supergroup, lin_rep))
+            else:
+                subgroups.append(Group(num, matrix, index))
             file.readline()
     return subgroups
 
@@ -632,18 +750,26 @@ def printMat(Z):
 ###########################################################################
 
 
-def getCosets(sup, sub, filename, M):
+def getCosets(sup, sub, M=None, filename=None):
+    if not M:
+        M = ['1','0','0','0','0','1','0','0','0','0','1','0']  
     data = {'super':sup, 'sub':sub, 'x1':M[0], 'x2':M[1], 'x3':M[2], 'x4':M[3], 'y1':M[4], 'y2':M[5], 'y3':M[6], 'y4':M[7], 'z1':M[8], 'z2':M[9], 'z3':M[10], 'z4':M[11], 'what':'left'}
     r = requests.post('http://www.cryst.ehu.es/cgi-bin/cryst/programs/nph-cosets', data)
-    start = r.text.index('Coset 1') 
-    end = r.text.index('<', start)
-    res = r.text[start:end]
-    res = re.sub(r"Coset \d+:\n\n",'',res)
-    res = re.sub(r"\(|\)",'',re.sub(r"\(\n",'',res))
-    res = res.replace(',',' ')
-    res = res.replace('\n\n','\n')
-    with open(filename,'w') as fid:
-        fid.write(res)
+    try:
+        start = r.text.index('Coset 1') 
+        end = r.text.index('<', start)
+        res = r.text[start:end]
+        res = re.sub(r"Coset \d+:\n\n",'',res)
+        res = re.sub(r"\(|\)",'',re.sub(r"\(\n",'',res))
+        res = res.replace(',',' ')
+        res = res.replace('\n\n','\n')
+        if filename:
+            with open(filename,'w') as fid:
+                fid.write(res)
+        else:
+            return res
+    except ValueError as e:
+        print("Bilbao Error: Sorry, no decomposition found. Please, check your transformation matrix!")
 
 def identifyGroup(generators):
     data = {'tipog':'gesp', 'generators':generators}
@@ -718,7 +844,7 @@ def get_s_groups(subgroups):
  
 
 def getFundDom(gnum, mat):
-    getCosets(gnum, '1', 'dat_files/coset_file', mat)
+    getCosets(gnum, '1', mat, 'dat_files/coset_file')
     return loadGroup('dat_files/coset_file')
 
 
