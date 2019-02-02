@@ -1,6 +1,6 @@
 """ NOT FOR USE.
 
-This code was used to process results and generate tables summarizing the decompositions (Chapter 4 of my Master's thesis) and a write-up detailing the results (Chapter 5)"""
+This code was used to process results and generate tables summarizing the decompositions (Chapter 4 of my Master's thesis) as well as a write-up detailing the results (Chapter 5)"""
 
 import group_modules_sym as gm
 import itertools
