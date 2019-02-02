@@ -120,25 +120,36 @@ def get_chain_urls(supergroup, subgroup, index=None):
         indices.append(index)
         index += 1
     return urls, indices
+
 def get_start_index(subgroup, ind_T):
     S = standardGenPos(subgroup)
     start_index = ind_T / S.shape[2]
     if start_index == 1: return 2
     if int(start_index) == 0: return 2
     return int(start_index)
+
 def ensure_all_futures(supergroup, urls, loop):
     with aiohttp.ClientSession(loop=loop) as session:
         return [asyncio.ensure_future(download_coroutine(supergroup, session, loop, url)) for url in urls]
-# async def download_coroutine(supergroup, session, loop, url):
-#     with aiohttp.ClientSession(loop=loop) as session:
-#         with async_timeout.timeout(None):
-#             async with session.get(url) as response:
-#                 text = await response.text()
-#                 soup = BeautifulSoup(text, 'html5lib')
-#                 matrix_links = soup.find_all('a')[4:-3]
-#                 if matrix_links:
-#                     async with aiofiles.open('subgroup_chains/matrix_urls_{}.dat'.format(supergroup), 'a') as fd:
-#                         [await fd.write('http://www.cryst.ehu.es/cgi-bin/cryst/programs/' + link['href'] +'\n') for link in matrix_links]
+
+async def download_coroutine(supergroup, session, loop, url):
+    """download_coroutine testing an async function doc!!
+
+    :param supergroup:
+    :param session:
+    :param loop:
+    :param url:
+    """
+    with aiohttp.ClientSession(loop=loop) as session:
+        with async_timeout.timeout(None):
+            async with session.get(url) as response:
+                text = await response.text()
+                soup = BeautifulSoup(text, 'html5lib')
+                matrix_links = soup.find_all('a')[4:-3]
+                if matrix_links:
+                    async with aiofiles.open('subgroup_chains/matrix_urls_{}.dat'.format(supergroup), 'a') as fd:
+                        [await fd.write('http://www.cryst.ehu.es/cgi-bin/cryst/programs/' + link['href'] +'\n') for link in matrix_links]
+
 def get_matrix_urls(supergroup, urls):
     dirname = 'subgroup_chains'
     filename = 'subgroup_chains/matrix_urls_{}.dat'.format(supergroup)
@@ -157,9 +168,11 @@ def get_matrix_urls(supergroup, urls):
     os.remove(filename)
     os.removedirs(dirname)
     return matrix_urls
+
 def ensure_matrix_futures(supergroup, loop, matrix_urls):
     with aiohttp.ClientSession(loop=loop) as session:
         return [asyncio.ensure_future(download_matrices(supergroup, session, loop, url)) for url in matrix_urls]
+
 # async def download_matrices(supergroup, session, loop, url):
 #     with async_timeout.timeout(None):
 #         async with aiohttp.ClientSession(loop=loop) as session:
@@ -168,6 +181,7 @@ def ensure_matrix_futures(supergroup, loop, matrix_urls):
 #                 matrices = format_matrix_text(text)
 #                 async with aiofiles.open('matrices/matrices_{}.dat'.format(supergroup), 'a') as fd:
 #                     await fd.write(matrices)
+
 def format_matrix_text(text):
     soup = BeautifulSoup(text, 'html5lib')
     text = soup.find('center').text.replace('\n\n', '\n')
@@ -178,6 +192,7 @@ def format_matrix_text(text):
     snum = str(int(chain[:chain.find('[')].split()[-1]))
     text = text.replace('\n\n', '\n\n{} {}\n'.format(snum, index))
     return text[text.find('\n')+2: text.rfind('\n\n')+2]
+
 def get_matrices(supergroup, matrix_urls):
     filename = 'matrices/matrices_{}.dat'.format(supergroup)
     open(filename, 'w').close()
