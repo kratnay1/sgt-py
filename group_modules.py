@@ -148,7 +148,9 @@ async def download_coroutine(supergroup, session, loop, url):
                 matrix_links = soup.find_all('a')[4:-3]
                 if matrix_links:
                     async with aiofiles.open('subgroup_chains/matrix_urls_{}.dat'.format(supergroup), 'a') as fd:
-                        [await fd.write('http://www.cryst.ehu.es/cgi-bin/cryst/programs/' + link['href'] +'\n') for link in matrix_links]
+                        # [await fd.write('http://www.cryst.ehu.es/cgi-bin/cryst/programs/' + link['href'] +'\n') for link in matrix_links]
+                        for link in matrix_links:
+                            await fd.write('http://www.cryst.ehu.es/cgi-bin/cryst/programs/' + link['href'] +'\n')
 
 def get_matrix_urls(supergroup, urls):
     dirname = 'subgroup_chains'
