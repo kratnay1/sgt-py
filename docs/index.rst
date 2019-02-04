@@ -26,5 +26,10 @@ Group Theory Modules
 .. automodule:: group_modules
    :members: loadGroup, loadCosetRep 
 
+   .. autocofunction:: download_coroutine
+
+
+
+
 ===============================
 
