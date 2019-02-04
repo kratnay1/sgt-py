@@ -4,3 +4,4 @@ async_timeout
 aiohttp
 aiofiles
 bs4
+sphinxcontrib-asyncio
