@@ -4,7 +4,6 @@
    contain the root `toctree` directive.
 
 Welcome to Sgt-Py's documentation!
-Testing webhooks
 
 ==================================
 
@@ -21,10 +20,9 @@ Indices and tables
 
 ===============================
 
-Group Theory Modules
 
 .. automodule:: group_modules
-   :members: loadGroup, loadCosetRep 
+   :members: SpaceGroup, loadGroup, loadCosetRep 
 
    .. autocofunction:: download_coroutine
 

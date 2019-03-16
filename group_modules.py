@@ -108,6 +108,8 @@ class LinRep:
 
 
 class SpaceGroup:
+    """A class to represent the general positions of a space group, i.e. a linear representation of :math:`\\frac{\\Gamma}{P1}` and their actions on :math:`\\mathbb{R}^3`."""
+
     def __init__(self, num, lin_rep, cosets, matrix=None):
         self.num = num
         self.lin_rep = LinRep(lin_rep, cosets[:-1])
@@ -169,7 +171,7 @@ def ensure_all_futures(supergroup, urls, loop):
         return [asyncio.ensure_future(download_coroutine(supergroup, session, loop, url)) for url in urls]
 
 async def download_coroutine(supergroup, session, loop, url):
-    """download_coroutine testing an async function doc!!
+    """download_coroutine test
 
     :param supergroup:
     :param session:
