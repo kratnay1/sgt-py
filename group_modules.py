@@ -93,6 +93,42 @@ class TableEntry:
         return symmorphic
 
 
+class LinRep:
+    def __init__(self, lin_rep, cosets):
+        self.lin_rep = lin_rep
+        self.cosets = cosets
+    def __str__(self):
+        return self.cosets
+    def __mul__(self, other):
+        new_lin_rep = groupMult(self.lin_rep, other.lin_rep)
+        new_cosets = cosets_from_lin_rep(new_lin_rep)
+        return LinRep(new_lin_rep, new_cosets)
+
+
+
+
+class SpaceGroup:
+    def __init__(self, num, lin_rep, cosets, matrix=None):
+        self.num = num
+        self.lin_rep = LinRep(lin_rep, cosets[:-1])
+        if not matrix:
+            self.matrix = id_matrix()
+        else:
+            self.matrix = matrix
+    def write_to_file(self, filename=None):
+        # TODO
+        return None
+
+class SpaceGroupPair:
+    def __init__(self, subgroup, supergroup, matrix, index):
+        self.subgroup = subgroup
+        self.supergroup = supergroup
+        self.matrix = matrix
+        self.index = index
+    
+
+def get_space_group(gnum, matrix=None):
+    return SpaceGroup(gnum, *cosetDecomp(gnum, '1', matrix), matrix)
 
 def get_space_subgroups(supergroup, subgroup, index=None):
     urls, indices = get_chain_urls(supergroup, subgroup, index)
@@ -175,14 +211,14 @@ def ensure_matrix_futures(supergroup, loop, matrix_urls):
     with aiohttp.ClientSession(loop=loop) as session:
         return [asyncio.ensure_future(download_matrices(supergroup, session, loop, url)) for url in matrix_urls]
 
-# async def download_matrices(supergroup, session, loop, url):
-#     with async_timeout.timeout(None):
-#         async with aiohttp.ClientSession(loop=loop) as session:
-#             async with session.get(url) as response:
-#                 text = await response.text()
-#                 matrices = format_matrix_text(text)
-#                 async with aiofiles.open('matrices/matrices_{}.dat'.format(supergroup), 'a') as fd:
-#                     await fd.write(matrices)
+async def download_matrices(supergroup, session, loop, url):
+    with async_timeout.timeout(None):
+        async with aiohttp.ClientSession(loop=loop) as session:
+            async with session.get(url) as response:
+                text = await response.text()
+                matrices = format_matrix_text(text)
+                async with aiofiles.open('matrices/matrices_{}.dat'.format(supergroup), 'a') as fd:
+                    await fd.write(matrices)
 
 def format_matrix_text(text):
     soup = BeautifulSoup(text, 'html5lib')
@@ -244,7 +280,7 @@ def getRow(str):
 
 def cosetDecomp(supergroup, subgroup, mat=None, filename=None):
     cosets = getCosets(supergroup, subgroup, mat, filename)
-    return loadGroup(filename, cosets)
+    return loadGroup(filename, cosets), cosets
 
 def standardGenPos(group, mat=None, filename=None):
     cosets = getCosets(group, 1, mat, filename)
@@ -372,28 +408,26 @@ def id_matrix():
 #     return subgroups
 
 
-def get_subgroups(filename, supergroup=None):
+def get_subgroups(filename, supergroup_num):
     # global biebGroups
     # biebGroups = loadBiebGroups()
-    subgroups = []
+    space_group_pairs = []
     with open(filename, 'r') as file:
         while True:
             try:
-                num, index = file.readline().split()
+                subgroup_num, index = file.readline().split()
             except ValueError:
                 break
             row1 = file.readline()
             row2 = file.readline()
             row3 = file.readline()
             matrix = row1 + row2 + row3
-            if supergroup:
-                matrix = matrix.split()
-                lin_rep = cosetDecomp(supergroup, num, matrix)
-                subgroups.append(Group(num, matrix, index, supergroup, lin_rep))
-            else:
-                subgroups.append(Group(num, matrix, index))
+            matrix = matrix.split()
+            subgroup = SpaceGroup(subgroup_num, *cosetDecomp(subgroup_num, '1'))
+            supergroup = SpaceGroup(supergroup_num, *cosetDecomp(supergroup_num, '1', matrix), matrix)
+            space_group_pairs.append(SpaceGroupPair(subgroup, supergroup, matrix, index))
             file.readline()
-    return subgroups
+    return space_group_pairs
 
 
 def get_subgroup_text(filename):
@@ -517,7 +551,12 @@ def groupMult(B, S):
         for s in range(Ssize):
             BS[:,:,count] = mult(B[:,:,b], S[:,:,s])
             count += 1
-    return BS
+    BS = np.unique(BS, axis=2)
+    for i in range(BS.shape[2]):
+        if np.allclose(np.eye(4), BS[:,:,i]):
+            res = np.delete(BS, i, axis=2)
+    return np.insert(res, 0, np.eye(4), axis=2)
+
 
 
 # returns the group inverse of the given matrix
@@ -570,6 +609,7 @@ def cardinality(G):
         for j in range(G.shape[2]):
             if i != j and LA.norm(G[:,:,i]-G[:,:,j]) > threshold:
                 count += 1
+    return count
 
 # Check that Lagrange's Thm holds
 def lagrangeCheck(G, B, S):
@@ -708,6 +748,13 @@ def printGroup2(G):
     for i in range(G.shape[2]):
         print(i+1)
         print(G[:,:,i])
+
+
+def cosets_from_lin_rep(G):
+    cosets = ""
+    for i in range(G.shape[2]):
+        cosets += printMatrix(G, i) + '\n'
+    return cosets[:-1]
 
 
 # prints the Cosets of a group

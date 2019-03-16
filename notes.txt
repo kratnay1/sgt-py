@@ -10,19 +10,18 @@
 
 Module overview: 
 
-SpaceGroup class (num, matrix, (opt)index, (opt)supergroup, (opt)infile)
-instance variables:
-- num
-- matrix
-- (opt) index
-- (opt) supergroup num
-- (opt) gen pos file (so it can be loaded)
+- SpaceGroup class
+- SpaceGroupPair class (supergroup-subgroup)
 
-methods:
-- get_num
-- get_matrix
-- get_supergroup
-- get_index
-- 
+todo:
+- multiplication
+- check normality
+- save coset decomposition
+- subgroup check
+
+- get Bieberbach subgroups
+- get symmorphic subgroups
+
+
 
 
