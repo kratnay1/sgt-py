@@ -22,7 +22,7 @@ Indices and tables
 
 
 .. automodule:: group_modules
-   :members: SpaceGroup, loadGroup, loadCosetRep 
+   :members: SpaceGroup, SpaceGroupPair, loadGroup, loadCosetRep 
 
    .. autocofunction:: download_coroutine
 

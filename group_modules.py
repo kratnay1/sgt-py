@@ -94,11 +94,15 @@ class TableEntry:
 
 
 class LinRep:
+    """A wrapper class for a linear representation that allows you to use the multiplication operator (*) to multiply two groups."""
+
     def __init__(self, lin_rep, cosets):
         self.lin_rep = lin_rep
         self.cosets = cosets
+
     def __str__(self):
         return self.cosets
+
     def __mul__(self, other):
         new_lin_rep = groupMult(self.lin_rep, other.lin_rep)
         new_cosets = cosets_from_lin_rep(new_lin_rep)
@@ -108,20 +112,34 @@ class LinRep:
 
 
 class SpaceGroup:
-    """A class to represent the general positions of a space group, i.e. a linear representation of :math:`\\frac{\\Gamma}{P1}` and their actions on :math:`\\mathbb{R}^3`."""
+    """A class to represent a space group by both a linear representation of :math:`\\frac{\\Gamma}{P1}` and the general positions (i.e. the actions on :math:`\\mathbb{R}^3`)."""
 
     def __init__(self, num, lin_rep, cosets, matrix=None):
+        """Constructor.
+
+        :param num: The ITA number of the space group.
+        :param lin_rep: A numpy.ndarray containing the homogenous transformation matrices of the group.
+        :param cosets: A string containing the general positions.
+        :param matrix: An affine transformation matrix used to conjugate the space group.
+        """
         self.num = num
         self.lin_rep = LinRep(lin_rep, cosets[:-1])
         if not matrix:
             self.matrix = id_matrix()
         else:
             self.matrix = matrix
+
     def write_to_file(self, filename=None):
+        """Writes the general positions to a specified file.
+
+        :param filename: A string containing the file name.
+        """
         # TODO
         return None
 
 class SpaceGroupPair:
+    """A class to store a supgergroup-subgroup pair of space groups."""
+
     def __init__(self, subgroup, supergroup, matrix, index):
         self.subgroup = subgroup
         self.supergroup = supergroup

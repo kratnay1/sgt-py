@@ -14,7 +14,6 @@ Module overview:
 - SpaceGroupPair class (supergroup-subgroup)
 
 todo:
-- multiplication
 - check normality
 - save coset decomposition
 - subgroup check
@@ -23,5 +22,6 @@ todo:
 - get symmorphic subgroups
 
 
+to comment:
 
 
