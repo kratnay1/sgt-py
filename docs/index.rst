@@ -21,8 +21,11 @@ Welcome to Sgt-Py's documentation!
 
 This is some tutorial::
 
-   a = 'string'
-   print(a)
+   >>> a = 'string'
+   >>> print(a)
+   string
+   
+   >>> b = 'new'
 
 
 And that's how you do that.
