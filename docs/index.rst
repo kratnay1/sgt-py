@@ -20,14 +20,15 @@ Indices and tables
 
 ===============================
 
-.. autoclass:: SpaceGroup
-   :members: write_to_file
-   
-.. autoclass:: SpaceGroupPair
-   :members: is_normal
 
 .. automodule:: group_modules
    :members: get_space_group, get_space_subgroups, loadGroup, loadCosetRep 
+
+   .. autoclass:: SpaceGroup
+      :members: write_to_file
+      
+   .. autoclass:: SpaceGroupPair
+      :members: is_normal
 
    .. autocofunction:: download_coroutine
 
