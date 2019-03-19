@@ -11,7 +11,6 @@ Welcome to Sgt-Py's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-Indices and tables
 ==================
 
 * :ref:`genindex`
@@ -19,10 +18,23 @@ Indices and tables
 * :ref:`search`
 
 ===============================
+Example usage:
+
+.. code-block:: python
+   import group_modules as gm
+
+   grp19 = gm.get_spacegroup(19)
+   print(grp19.lin_rep)
+
+   grp_pairs = gm.get_space_subgroups(19,4)
+
 
 
 .. automodule:: group_modules
    :members: get_space_group, get_space_subgroups, loadGroup, loadCosetRep 
+
+   .. autoclass:: LinRep 
+       :members: 
 
    .. autoclass:: SpaceGroup
       :members: __init__, write_to_file
