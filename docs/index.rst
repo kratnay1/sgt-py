@@ -18,15 +18,18 @@ Welcome to Sgt-Py's documentation!
 
 ===============================
 
+Example usage:
+===============================
 
-This is some tutorial::
+Print the general positions of a space group::
 
-   >>> a = 'string'
-   >>> print(a)
-   string
-   
-   >>> b = 'new'
-
+   >>> import group_modules as gm
+   >>> group_19 = gm.get_space_group(19)
+   >>> print(group_19.lin_rep)
+   x y z
+   -x+1/2 -y z+1/2
+   -x y+1/2 -z+1/2
+   x+1/2 -y+1/2 -z
 
 And that's how you do that.
 
