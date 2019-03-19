@@ -21,7 +21,7 @@ Indices and tables
 ===============================
 
 .. autoclass:: SpaceGroup
-   :members: write_to_file
+   :members: __init__, write_to_file
    
 .. autoclass:: SpaceGroupPair
    :members: is_normal
