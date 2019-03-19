@@ -14,7 +14,6 @@ Welcome to Sgt-Py's documentation!
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 
 ===============================
@@ -23,6 +22,7 @@ Welcome to Sgt-Py's documentation!
 This is some tutorial::
 
    a = 'string'
+   print(a)
 
 
 And that's how you do that.
