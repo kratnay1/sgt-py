@@ -17,17 +17,19 @@ Welcome to Sgt-Py's documentation!
 * :ref:`modindex`
 * :ref:`search`
 
+
 ===============================
-===============================
 
 
-.. code-block:: python
-   import group_modules as gm
+.. example-code::
 
-   grp19 = gm.get_spacegroup(19)
-   print(grp19.lin_rep)
+   .. code-block:: python
+      import group_modules as gm
 
-   grp_pairs = gm.get_space_subgroups(19,4)
+      grp19 = gm.get_spacegroup(19)
+      print(grp19.lin_rep)
+
+      grp_pairs = gm.get_space_subgroups(19,4)
 
 
 
