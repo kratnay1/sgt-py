@@ -139,7 +139,7 @@ class SpaceGroup:
 class SpaceGroupPair:
     """A class to store a supgergroup-subgroup pair of space groups.
 
-        :param subgroup:
+        :param subgroup: Neww.
         :param supergroup:
         :param matrix:
         :param index:
