@@ -17,7 +17,6 @@ Welcome to Sgt-Py's documentation!
 * :ref:`modindex`
 * :ref:`search`
 
-
 ===============================
 
 
@@ -31,7 +30,7 @@ Welcome to Sgt-Py's documentation!
 
       grp_pairs = gm.get_space_subgroups(19,4)
 
-
+==============================
 
 .. automodule:: group_modules
    :members: get_space_group, get_space_subgroups, loadGroup, loadCosetRep 
@@ -44,8 +43,6 @@ Welcome to Sgt-Py's documentation!
       
    .. autoclass:: SpaceGroupPair
       :members: __init__, is_normal
-
-
 
 
 
