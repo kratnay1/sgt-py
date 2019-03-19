@@ -20,6 +20,7 @@ Welcome to Sgt-Py's documentation!
 
 Example usage:
 ===============================
+**Example usage:**
 
 Print the general positions of a space group::
 
