@@ -22,7 +22,7 @@ Welcome to Sgt-Py's documentation!
 
 This is some tutorial:
 
-.. code-block:: python
+.. codeblock:: python
    a = 'string'
 
 
