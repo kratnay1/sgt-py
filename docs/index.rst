@@ -20,17 +20,18 @@ Welcome to Sgt-Py's documentation!
 ===============================
 
 
-.. example-code::
+This is some tutorial:
 
-   This is some tutorial 
+.. code-block:: python
+   import group_modules as gm
 
-   .. code-block:: python
-      import group_modules as gm
+   grp19 = gm.get_spacegroup(19)
+   print(grp19.lin_rep)
 
-      grp19 = gm.get_spacegroup(19)
-      print(grp19.lin_rep)
+   grp_pairs = gm.get_space_subgroups(19,4)
 
-      grp_pairs = gm.get_space_subgroups(19,4)
+And that's how you do that.
+
 
 ==============================
 
