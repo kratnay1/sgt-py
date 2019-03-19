@@ -18,7 +18,8 @@ Welcome to Sgt-Py's documentation!
 * :ref:`search`
 
 ===============================
-Example usage:
+===============================
+
 
 .. code-block:: python
    import group_modules as gm
