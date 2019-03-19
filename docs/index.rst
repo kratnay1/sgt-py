@@ -27,7 +27,7 @@ Indices and tables
    :members: is_normal
 
 .. automodule:: group_modules
-   :members: get_space_group, get_space_subgroup, loadGroup, loadCosetRep 
+   :members: get_space_group, get_space_subgroups, loadGroup, loadCosetRep 
 
    .. autocofunction:: download_coroutine
 
