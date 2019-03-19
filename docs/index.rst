@@ -22,6 +22,8 @@ Welcome to Sgt-Py's documentation!
 
 .. example-code::
 
+   This is some tutorial 
+
    .. code-block:: python
       import group_modules as gm
 
