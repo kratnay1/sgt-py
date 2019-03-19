@@ -110,16 +110,17 @@ class LinRep:
 
 
 class SpaceGroup:
-    """A class to represent a space group by both a linear representation of :math:`\\frac{\\Gamma}{P1}` and the general positions (i.e. the actions on :math:`\\mathbb{R}^3`)."""
-
-    def __init__(self, num, lin_rep, cosets, matrix=None):
-        """Constructor.
+    """A class to represent a space group by both a linear representation of :math:`\\frac{\\Gamma}{P1}` and the general positions (i.e. the actions on :math:`\\mathbb{R}^3`).
 
         :param num: The ITA number of the space group.
         :param lin_rep: A numpy.ndarray containing the homogenous transformation matrices of the group.
         :param cosets: A string containing the general positions.
         :param matrix: An affine transformation matrix used to conjugate the space group.
         """
+
+    def __init__(self, num, lin_rep, cosets, matrix=None):
+        """Constructor"""
+
         self.num = num
         self.lin_rep = LinRep(lin_rep, cosets[:-1])
         if not matrix:
@@ -136,9 +137,16 @@ class SpaceGroup:
         return None
 
 class SpaceGroupPair:
-    """A class to store a supgergroup-subgroup pair of space groups."""
+    """A class to store a supgergroup-subgroup pair of space groups.
 
+        :param subgroup:
+        :param supergroup:
+        :param matrix:
+        :param index:
+        """
     def __init__(self, subgroup, supergroup, matrix, index):
+        """Constructor"""
+
         self.subgroup = subgroup
         self.supergroup = supergroup
         self.matrix = matrix

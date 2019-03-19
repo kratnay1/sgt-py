@@ -21,10 +21,10 @@ Indices and tables
 ===============================
 
 .. autoclass:: SpaceGroup
-   :members: init, write_to_file
+   :members: write_to_file
    
 .. autoclass:: SpaceGroupPair
-   :members: init, is_normal
+   :members: is_normal
 
 .. automodule:: group_modules
    :members: get_space_group, get_space_subgroup, loadGroup, loadCosetRep 
