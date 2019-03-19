@@ -20,9 +20,8 @@ Welcome to Sgt-Py's documentation!
 ===============================
 
 
-This is some tutorial:
+This is some tutorial::
 
-::
    a = 'string'
 
 
