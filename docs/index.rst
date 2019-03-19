@@ -24,10 +24,10 @@ Indices and tables
    :members: __init__, write_to_file
    
 .. autoclass:: SpaceGroupPair
-   :members: is_normal
+   :members: 
 
 .. automodule:: group_modules
-   :members: get_space_group, get_space_subgroups, loadGroup, loadCosetRep 
+   :members: get_space_group, get_space_subgroup, loadGroup, loadCosetRep 
 
    .. autocofunction:: download_coroutine
 
