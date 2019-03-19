@@ -23,12 +23,8 @@ Welcome to Sgt-Py's documentation!
 This is some tutorial:
 
 .. code-block:: python
-   import group_modules as gm
+   a = 'string'
 
-   grp19 = gm.get_spacegroup(19)
-   print(grp19.lin_rep)
-
-   grp_pairs = gm.get_space_subgroups(19,4)
 
 And that's how you do that.
 
