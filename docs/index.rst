@@ -25,12 +25,11 @@ Indices and tables
    :members: get_space_group, get_space_subgroups, loadGroup, loadCosetRep 
 
    .. autoclass:: SpaceGroup
-      :members: write_to_file
+      :members: init, write_to_file
       
    .. autoclass:: SpaceGroupPair
-      :members: is_normal
+      :members: __init__, is_normal
 
-   .. autocofunction:: download_coroutine
 
 
 
