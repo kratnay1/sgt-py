@@ -109,8 +109,6 @@ class LinRep:
         return LinRep(new_lin_rep, new_cosets)
 
 
-
-
 class SpaceGroup:
     """A class to represent a space group by both a linear representation of :math:`\\frac{\\Gamma}{P1}` and the general positions (i.e. the actions on :math:`\\mathbb{R}^3`)."""
 
@@ -145,12 +143,28 @@ class SpaceGroupPair:
         self.supergroup = supergroup
         self.matrix = matrix
         self.index = index
+
+    def is_normal(self):
+        """is_normal docstring"""
+        return None
     
 
 def get_space_group(gnum, matrix=None):
+    """Returns a SpaceGroup object given the ITA number and transformation matrix that relates the group and subgroup (:math:`P1`) basis.
+
+    :param gnum: The group ITA number.
+    :param matrix: The transformation matrix.
+    """
     return SpaceGroup(gnum, *cosetDecomp(gnum, '1', matrix), matrix)
 
+
 def get_space_subgroups(supergroup, subgroup, index=None):
+    """Returns a list of SpaceGroupPair objects given a space group ITA number and a space subgroup ITA number for a given index or for all possible indices if no index is provided (stopping right before the index of the lattice translation group in the supergroup).
+
+    :param supergroup: The supergroup ITA number.
+    :param subgroup: The subgroup ITA number.
+    :param index: The index of the subgroup in the supergroup.
+    """
     urls, indices = get_chain_urls(supergroup, subgroup, index)
     matrix_urls = get_matrix_urls(supergroup, urls)
     if matrix_urls == []:
@@ -159,7 +173,7 @@ def get_space_subgroups(supergroup, subgroup, index=None):
         raise ValueError('Bilbao Error: This is not possible.')
     get_matrices(supergroup, matrix_urls)
     return get_subgroups('matrices/matrices_{}.dat'.format(supergroup), supergroup)
-    # return urls, matrix_urls, indices
+
 
 def get_chain_urls(supergroup, subgroup, index=None):
     if index:
@@ -350,6 +364,21 @@ def getGenerator(rep):
     return rep[0] + "," + rep[1] + "," + rep[2] + "\n"
 
 
+def getBiebElems(A):
+    biebElems = [[],[]]
+    for reps in A:
+        matrices = []
+        gens = []
+        for rep in reps:
+            g = loadCosetRep(rep)
+            if not isSgroupElem(g):
+                matrices.append([g])
+                gens.append(getGenerator(rep))
+        biebElems[0].append(matrices)
+        biebElems[1].append(gens)
+    return biebElems
+
+
 def getSymElems(A):
     symElems = [[],[]]
     for reps in A:
@@ -365,12 +394,12 @@ def getSymElems(A):
     return symElems
 
 
-# symGroups = []
+symGroups = []
 biebGroups = []
 matCombs = []
 repCombs = []
 Bgroups = []
-# Sgroups = []
+Sgroups = []
 
 
 def combineElems(matTerms, repTerms, matAccum, repAccum):
@@ -898,6 +927,23 @@ def getSgroups(gnum, bnum, mat, k):
     del Sgroups[:]
     combineElems(symElems[0], symElems[1], [], '')
     Sgroups = [np.insert(np.dstack(grp),0,np.eye(4,4),axis=2) for grp in matCombs]
+    removeNonGroups()
+
+
+def getBgroups(gnum, snum, mat, k):
+    getCosets(gnum, snum, 'dat_files/g_s_cosets', mat)
+    with open('dat_files/g_s_cosets') as file:
+        A = [line.split() for line in file]
+    A = [A[i:i+k] for i in range(0,len(A),k)]
+    A.pop(0)
+    # symElems = getSymElems(A)
+    biebElems = getBiebElems(A)
+    del matCombs[:]
+    del repCombs[:]
+    global Bgroups
+    del Bgroups[:]
+    combineElems(biebElems[0], biebElems[1], [], '')
+    Bgroups = [np.insert(np.dstack(grp),0,np.eye(4,4),axis=2) for grp in matCombs]
     removeNonGroups()
 
 

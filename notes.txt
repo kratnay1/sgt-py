@@ -20,8 +20,10 @@ todo:
 
 - get Bieberbach subgroups
 - get symmorphic subgroups
-
+- identifyGroup?
 
 to comment:
+- is_normal
+- is_subgroup
 
 

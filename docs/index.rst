@@ -20,9 +20,13 @@ Indices and tables
 
 ===============================
 
+.. autoclass:: SpaceGroup
+   :members: __init__, write_to_file
+   
+.. autoclass:: SpaceGroupPair
 
 .. automodule:: group_modules
-   :members: SpaceGroup, SpaceGroupPair, loadGroup, loadCosetRep 
+   :members: get_space_group, get_space_subgroup, loadGroup, loadCosetRep 
 
    .. autocofunction:: download_coroutine
 
