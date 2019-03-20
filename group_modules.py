@@ -97,13 +97,10 @@ class LinRep:
     """A wrapper class for a linear representation that allows you to use the multiplication operator (*) to multiply two groups."""
 
     def __init__(self, lin_rep, cosets):
-        """__init__
-
-        :param lin_rep:
-        :param cosets:
-        """
+        #: linear_rep 
         self.lin_rep = lin_rep
         self.cosets = cosets
+        self.size = lin_rep.shape[2]
 
     def __str__(self):
         return self.cosets

@@ -20,7 +20,6 @@ Welcome to Sgt-Py's documentation!
 
 Example usage:
 ===============================
-**Example usage:**
 
 Print the general positions of a space group::
 
@@ -31,6 +30,9 @@ Print the general positions of a space group::
    -x+1/2 -y z+1/2
    -x y+1/2 -z+1/2
    x+1/2 -y+1/2 -z
+
+
+
 
 And that's how you do that.
 
