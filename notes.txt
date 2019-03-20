@@ -26,4 +26,5 @@ to comment:
 - is_normal
 - is_subgroup
 
+- removeNonGroups for Bieberbach grps
 

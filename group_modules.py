@@ -1,4 +1,3 @@
-""" Group theory modules for testing with space groups """
 
 import sys
 import re
@@ -96,14 +95,21 @@ class TableEntry:
 class LinRep:
     """A wrapper class for a linear representation that allows you to use the multiplication operator (*) to multiply two groups."""
 
-    def __init__(self, lin_rep, cosets):
+    def __init__(self, lin_rep, cosets=None):
         #: linear_rep 
         self.lin_rep = lin_rep
+        if cosets:
+            self.cosets = cosets
+        else:
+            self.cosets = cosets_from_lin_rep(lin_rep)
         self.cosets = cosets
         self.size = lin_rep.shape[2]
 
     def __str__(self):
         return self.cosets
+
+    def __eq__(self, other):
+        return gEquals(self.lin_rep, other.lin_rep)
 
     def __mul__(self, other):
         new_lin_rep = groupMult(self.lin_rep, other.lin_rep)
@@ -128,6 +134,9 @@ class SpaceGroup:
             self.matrix = id_matrix()
         else:
             self.matrix = matrix
+
+    def size(self):
+        return self.lin_rep.size
 
     def write_to_file(self, filename=None):
         """Writes the general positions to a specified file.
@@ -687,6 +696,9 @@ def isNormal(B, G):
     return True
 
 
+def is_normal(sub, sup):
+    return isNormal(sub.lin_rep, sup.lin_rep)
+
 # conjugates a group by a transformation
 # X * g * X^-1  for all g in G
 def conjugate1(G, X):
@@ -886,7 +898,7 @@ def getCosets(sup, sub, M=None, filename=None):
     except ValueError as e:
         print("Bilbao Error: Sorry, no decomposition found. Please, check your transformation matrix!")
 
-def identifyGroup(generators):
+def identify_group(generators):
     data = {'tipog':'gesp', 'generators':generators}
     t = requests.post('http://www.cryst.ehu.es/cgi-bin/cryst/programs/checkgr.pl', data).text
     start = t.index('grupo') + 14
@@ -907,7 +919,7 @@ def identifyGroup(generators):
 ###########################################################################
 
 
-def removeNonGroups():
+def removeNonSgroups():
     ind2remove = []
     for i in range(len(Sgroups)):
         if not subgroup(Sgroups[i]): ind2remove.append(i)
@@ -916,11 +928,20 @@ def removeNonGroups():
         del repCombs[i]
 
 
-def getSgroups(gnum, bnum, mat, k):
-    getCosets(gnum, bnum, 'dat_files/g_b_cosets', mat)
+def removeNonBgroups():
+    ind2remove = []
+    for i in range(len(Bgroups)):
+        if not subgroup(Bgroups[i]): ind2remove.append(i)
+    for i in sorted(ind2remove, reverse=True):
+        del Bgroups[i]
+        del repCombs[i]
+
+
+def get_sym_complements(gnum, bnum, mat, bsize):
+    getCosets(gnum, bnum, mat, 'dat_files/g_b_cosets')
     with open('dat_files/g_b_cosets') as file:
         A = [line.split() for line in file]
-    A = [A[i:i+k] for i in range(0,len(A),k)]
+    A = [A[i:i+bsize] for i in range(0,len(A),bsize)]
     A.pop(0)
     symElems = getSymElems(A)
     del matCombs[:]
@@ -929,16 +950,18 @@ def getSgroups(gnum, bnum, mat, k):
     del Sgroups[:]
     combineElems(symElems[0], symElems[1], [], '')
     Sgroups = [np.insert(np.dstack(grp),0,np.eye(4,4),axis=2) for grp in matCombs]
-    removeNonGroups()
+    removeNonSgroups()
+    reps = ['x,y,z\n'+rep for rep in repCombs]
+    lin_reps = [LinRep(grp, cosets[:-1]) for grp,cosets in zip(Sgroups,reps)]
+    return lin_reps
 
 
-def getBgroups(gnum, snum, mat, k):
-    getCosets(gnum, snum, 'dat_files/g_s_cosets', mat)
+def get_bieb_complements(gnum, snum, mat, ssize):
+    getCosets(gnum, snum, mat, 'dat_files/g_s_cosets')
     with open('dat_files/g_s_cosets') as file:
         A = [line.split() for line in file]
-    A = [A[i:i+k] for i in range(0,len(A),k)]
+    A = [A[i:i+ssize] for i in range(0,len(A),ssize)]
     A.pop(0)
-    # symElems = getSymElems(A)
     biebElems = getBiebElems(A)
     del matCombs[:]
     del repCombs[:]
@@ -946,7 +969,10 @@ def getBgroups(gnum, snum, mat, k):
     del Bgroups[:]
     combineElems(biebElems[0], biebElems[1], [], '')
     Bgroups = [np.insert(np.dstack(grp),0,np.eye(4,4),axis=2) for grp in matCombs]
-    removeNonGroups()
+    removeNonBgroups()
+    reps = ['x,y,z\n'+rep for rep in repCombs]
+    lin_reps = [LinRep(grp, cosets[:-1]) for grp,cosets in zip(Bgroups,reps)]
+    return lin_reps
 
 
 def get_b_groups(subgroups):
@@ -986,7 +1012,7 @@ def decomp(gnum, subgroups, bgroups):
         bnum = subgroup.num
         Z = subgroup.matrix
         G = getFundDom(gnum, Z)
-        getSgroups(gnum, bnum, Z, B.shape[2])
+        get_sym_complements(gnum, bnum, Z, B.shape[2])
         S = semidirectTest(G, B, bnum, Z, subgroup.index)
         if S != []: decomps.append(Decomp(gnum, bnum, Z, S))
     TableEntry(decomps)
@@ -999,7 +1025,7 @@ def semidirectTest(G, B, bnum, Z, index):
         S = Sgroups[i]
         if gInside(G, B) and gInside(G, S) and gEquals(G, groupMult(B, S)):
             generators = 'x,y,z\n' + repCombs[i]
-            snum, smatrix, is_symmorphic = identifyGroup(generators)
+            snum, smatrix, is_symmorphic = identify_group(generators)
             printMat(Z)
             print('Gamma: {}'.format(sys.argv[1]))
             printGroup(G)
@@ -1033,7 +1059,7 @@ def SymSemidirectTest(G, S, snum, Z, index):
         S = Sgroups[i]
         if gInside(G, S) and gInside(G, B) and gEquals(G, groupMult(B, S)):
             generators = 'x,y,z\n' + repCombs[i]
-            snum, smatrix, is_symmorphic = identifyGroup(generators)
+            snum, smatrix, is_symmorphic = identify_group(generators)
             printMat(Z)
             print('Gamma: {}'.format(sys.argv[1]))
             printGroup(G)
