@@ -17,7 +17,6 @@ Welcome to Sgt-Py's documentation!
 * :ref:`search`
 
 ===============================
-
 Example usage:
 ===============================
 
