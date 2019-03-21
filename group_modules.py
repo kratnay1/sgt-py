@@ -322,17 +322,15 @@ def getRow(str):
     return row
 
 
-
 def cosetDecomp(supergroup, subgroup, mat=None, filename=None):
     cosets = getCosets(supergroup, subgroup, mat, filename)
     return loadGroup(filename, cosets), cosets
+
 
 def standardGenPos(group, mat=None, filename=None):
     cosets = getCosets(group, 1, mat, filename)
     return loadGroup(filename, cosets)
 
-
-# loads a group as a 3d array of 4x4 matrices
 
 def loadGroup(filename=None, coset_text=None):
     """Loads an n-element finite group as an numpy.ndarray with shape (4,4,n).  Each group element is represented as a 4x4 homogenous matrix of the form 
@@ -529,6 +527,7 @@ def classify_b_subgroups(gnum):
     normal_file.close()
     not_normal_file.close()
 
+
 def classify_s_subgroups(gnum):
     filename = 's_matrices/s_matrices_{}.dat_uniq'.format(gnum)
     strings = get_subgroup_text(filename)
@@ -544,6 +543,7 @@ def classify_s_subgroups(gnum):
             not_normal_file.write(text)
     normal_file.close()
     not_normal_file.close()
+
 
 # mod group element by P1
 def modP1(X):
@@ -671,6 +671,7 @@ def cardinality(G):
                 count += 1
     return count
 
+
 # Check that Lagrange's Thm holds
 def lagrangeCheck(G, B, S):
     return G.shape[2] == (B.shape[2] * S.shape[2])
@@ -797,9 +798,6 @@ def classifyGroup(G):
         print(isSgroupElem(G[:,:,i]))
 
 
-##############################################################################
-##############################################################################
-
 def printGenerators(gens):
     gens = '(' + gens.replace(',', ', ')
     gens = gens.replace('\n', ')\n(')
@@ -872,11 +870,6 @@ def printMat(Z):
     print(Z[8] + "    " + Z[9] + "    " + Z[10] + "    " + Z[11])
 
 
-###########################################################################
-################## Interface with Bilbao server ###########################
-###########################################################################
-
-
 def getCosets(sup, sub, M=None, filename=None):
     if not M:
         M = ['1','0','0','0','0','1','0','0','0','0','1','0']  
@@ -898,6 +891,7 @@ def getCosets(sup, sub, M=None, filename=None):
     except ValueError as e:
         print("Bilbao Error: Sorry, no decomposition found. Please, check your transformation matrix!")
 
+
 def identify_group(generators):
     data = {'tipog':'gesp', 'generators':generators}
     t = requests.post('http://www.cryst.ehu.es/cgi-bin/cryst/programs/checkgr.pl', data).text
@@ -909,14 +903,14 @@ def identify_group(generators):
     end = t.index('<', start)
     smatrix = LA.inv(load_matrix(t[start:end].split()))
     smatrix = [str(Fraction(s)) for s in smatrix[0:3,:].flatten()]
+    return num, smatrix 
+
+
+def is_symmorphic(num):
     S = loadSymGroups()
-    if num in S: 
-        return num, smatrix, True
-    return num, smatrix, False
-
-
-###########################################################################
-###########################################################################
+    if num is S:
+        return True
+    return False
 
 
 def removeNonSgroups():
@@ -1025,14 +1019,15 @@ def semidirectTest(G, B, bnum, Z, index):
         S = Sgroups[i]
         if gInside(G, B) and gInside(G, S) and gEquals(G, groupMult(B, S)):
             generators = 'x,y,z\n' + repCombs[i]
-            snum, smatrix, is_symmorphic = identify_group(generators)
+            snum, smatrix = identify_group(generators)
+            symmorphic = is_symmorphic(snum)
             printMat(Z)
             print('Gamma: {}'.format(sys.argv[1]))
             printGroup(G)
             # B is normal
             print('Gamma_B: {} normal, index: {}'.format(bnum, index))
             printGroup(B)
-            if is_symmorphic:
+            if symmorphic:
                 if isNormal(S, G):
                     print('Gamma_S: {} normal'.format(snum))
                     sgrps.append(Subgroup(snum, True, True))
@@ -1059,14 +1054,15 @@ def SymSemidirectTest(G, S, snum, Z, index):
         S = Sgroups[i]
         if gInside(G, S) and gInside(G, B) and gEquals(G, groupMult(B, S)):
             generators = 'x,y,z\n' + repCombs[i]
-            snum, smatrix, is_symmorphic = identify_group(generators)
+            snum, smatrix = identify_group(generators)
+            symmorphic = is_symmorphic(snum)
             printMat(Z)
             print('Gamma: {}'.format(sys.argv[1]))
             printGroup(G)
             # B is normal
             print('Gamma_B: {} normal, index: {}'.format(bnum, index))
             printGroup(B)
-            if is_symmorphic:
+            if symmorphic:
                 if isNormal(S, G):
                     print('Gamma_S: {} normal'.format(snum))
                     sgrps.append(Subgroup(snum, True, True))
