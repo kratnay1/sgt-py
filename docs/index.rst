@@ -17,6 +17,7 @@ Welcome to Sgt-Py's documentation!
 * :ref:`search`
 
 ===============================
+
 Example usage:
 ===============================
 
@@ -69,6 +70,7 @@ Identify the space group and transformation matrix that yields the complement gr
 From this you can conclude that :math:`P222_1` can be written as a direct product of :math:`P2_1` and :math:`P2`.
 
 ==============================
+
 Classes
 ==============================
 .. automodule:: group_modules
@@ -83,6 +85,7 @@ Classes
       :members: __init__, is_normal
 
 ==============================
+
 Functions
 ==============================
 
