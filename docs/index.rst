@@ -73,7 +73,6 @@ From this you can conclude that :math:`P222_1` can be written as a direct produc
 Classes
 ==============================
 .. automodule:: group_modules
-   :members:
 
    .. autoclass:: LinRep 
        :members: 
@@ -84,14 +83,12 @@ Classes
    .. autoclass:: SpaceGroupPair
       :members: __init__, is_normal
 
-
 ==============================
 Functions
 ==============================
 
 .. automodule:: group_modules
    :members: get_space_group, get_space_subgroups, loadGroup, loadCosetRep 
-
 
 
 ===============================
