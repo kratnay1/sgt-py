@@ -35,7 +35,7 @@ Print the general positions of space group :math:`P2_{1}2_{1}2_{1}` in the stand
 
 **Decomposing a space group into a product of subgroups**
 
-To find a decomposition of the space group :math:`P222_1` with respect to the Bieberbach subgroup :math:`P2_1`, start by finding a SpaceGroupPair object relating the two space groups::
+To find a decomposition of the space group :math:`P222_1` with respect to the Bieberbach subgroup :math:`P2_1`, start by finding a :class:`SpaceGroupPair` object relating the two space groups::
 
    >>> import group_modules as gm
    >>> group_pairs = gm.get_space_subgroups(17,4)

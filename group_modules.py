@@ -908,7 +908,14 @@ def identify_group(generators):
 
 def is_symmorphic(num):
     S = loadSymGroups()
-    if num is S:
+    if num in S:
+        return True
+    return False
+
+
+def is_bieberbach(num):
+    B = loadBiebGroups()
+    if num in S:
         return True
     return False
 
