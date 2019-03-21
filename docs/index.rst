@@ -21,7 +21,9 @@ Welcome to Sgt-Py's documentation!
 Example usage:
 ===============================
 
-Print the general positions of a space group::
+**Print the general positions of a space group**
+
+Print the general positions of space group :math:`P2_{1}2_{1}2_{1}` in the standard setting::
 
    >>> import group_modules as gm
    >>> group_19 = gm.get_space_group(19)
@@ -65,7 +67,7 @@ Identify the space group and transformation matrix that yields the complement gr
    >>> print(num)
    '3'
 
-From this you can conclude that :math:`P222_1` can be written as a direct product of :math:`P2_1` and :math:`P3`.
+From this you can conclude that :math:`P222_1` can be written as a direct product of :math:`P2_1` and :math:`P2`.
 
 ==============================
 Classes
