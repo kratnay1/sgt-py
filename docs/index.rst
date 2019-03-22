@@ -5,7 +5,7 @@
 
 Welcome to Sgt-Py_'s documentation! 
 
-Sgt-Py is a python package for performing group theoretic calculations with crystallographic space groups that interfaces with several functions from the `Bilbao Crystallographic Server`_.
+Sgt-Py_ is a python package for performing group theoretic calculations with crystallographic space groups that interfaces with several functions from the `Bilbao Crystallographic Server`_.
 
 .. _Sgt-Py: https://github.com/kratnay1/sgt-py/
 .. _Bilbao Crystallographic Server: http://www.cryst.ehu.es
