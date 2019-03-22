@@ -79,7 +79,7 @@ Classes
        :members: 
 
    .. autoclass:: SpaceGroup
-      :members: write_to_file
+      :members: size, write_to_file
       
    .. autoclass:: SpaceGroupPair
       :members: is_normal

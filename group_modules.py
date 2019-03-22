@@ -98,7 +98,7 @@ class LinRep:
     :ivar lin_rep:  An n-element finite matrix group is represented as an numpy.ndarray with shape (4,4,n).  Each group element is represented as a 4x4 homogenous matrix of the form 
         :math:`{\\cal H}(A, {\\bf a}) = \\left(\\begin{array}{ccc}
         A && {\\bf a} \\\ \\\
-                {\\bf 0}^t && 1 \\end{array}\\right)` where :math:`A \\in GL(3, \\mathbb{R})` and :math`{\\bf a} \\in \\mathbb{R}^3.`
+                {\\bf 0}^t && 1 \\end{array}\\right)` where :math:`A \\in GL(3, \\mathbb{R})` and :math:`{\\bf a} \\in \\mathbb{R}^3.`
 
     :ivar cosets: The general positions (i.e. actions on :math:`\\mathbb{R}^3`).
     :ivar size: The size of the group.
@@ -131,10 +131,8 @@ class SpaceGroup:
     """A class to represent a space group by both a linear representation of :math:`\\frac{\\Gamma}{P1}` and the general positions (i.e. the actions on :math:`\\mathbb{R}^3`).
     
     :ivar num: The ITA number of the space group.
-    :ivar lin_rep: A numpy.ndarray containing the homogenous transformation matrices of the group.
-    :ivar cosets: A string containing the general positions.
-    :ivar matrix: An affine transformation matrix used to conjugate the space group.
-    
+    :ivar lin_rep: A LinRep object representing a fundamental domain of :math:`\\frac{\\Gamma}{P1}`.
+    :ivar matrix: The affine transformation matrix used to conjugate the space group.
     """
 
     def __init__(self, num, lin_rep, cosets, matrix=None):
@@ -146,29 +144,39 @@ class SpaceGroup:
             self.matrix = matrix
 
     def size(self):
-        """Returns the size of :math:`\\frac{\\Gamma}{P1}`"""
+        """Returns the size of a fundamental domain of :math:`\\frac{\\Gamma}{P1}`"""
         return self.lin_rep.size
 
-    def write_to_file(self, filename=None):
+    def write_to_file(self, filename):
         """Writes the general positions to a specified file.
 
         :param filename: A string containing the file name.
         """
-        # TODO
-        return None
+        with open(filename, 'w') as file:
+            file.write(self.lin_rep.cosets)
+
 
 class SpaceGroupPair:
-    """A class to store a supgergroup-subgroup pair of space groups."""
+    """A class to store a supgergroup-subgroup pair of space groups.
+
+    :ivar subgroup: A SpaceGroup object representing the subgroup.
+    :ivar supergroup: A SpaceGroup object representing the supergroup.
+    :ivar matrix: The affine transformation that conjugates the supergroup to contain the subgroup.
+    :ivar index: The index of the subgroup in the supergroup.
+    """
 
     def __init__(self, subgroup, supergroup, matrix, index):
         self.subgroup = subgroup
         self.supergroup = supergroup
         self.matrix = matrix
         self.index = index
+        self.normal = None
 
     def is_normal(self):
-        """is_normal docstring"""
-        return None
+        """Returns True if the subgroup is normal in the supergroup and False otherwise."""
+        if not self.normal:
+            self.normal = is_normal(self.subgroup.lin_rep, self.supergroup.lin_rep)
+        return self.normal
     
 
 def get_space_group(gnum, matrix=None):
