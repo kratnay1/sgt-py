@@ -95,9 +95,9 @@ class TableEntry:
 class LinRep:
     """A wrapper class for a linear representation that allows you to use the multiplication operator (*) to multiply two groups.
 
-    :ivar lin_rep: initial value: lin_rep
-    blahhhh
-    :ivar cosets: initial value: cosets
+    :ivar lin_rep: lin_rep blahhhh
+
+    :cosets: cosets
 
     :ivar size: initial value: lin_rep.shape[2]
     blah
