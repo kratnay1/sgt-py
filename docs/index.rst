@@ -3,9 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Sgt-Py's documentation!
-
-==================================
+Welcome to Sgt-Py's documentation! Sgt-Py (link to github) is a python package for performing group theoretic calculations with crystallographic space groups and interfaces with several functions from the `Link Biblao Crystallographic Server <www.cryst.ehu.es/>`_.
 
 .. toctree::
    :maxdepth: 2
