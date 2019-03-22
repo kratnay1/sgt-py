@@ -93,19 +93,25 @@ class TableEntry:
 
 
 class LinRep:
-    """A wrapper class for a linear representation that allows you to use the multiplication operator (*) to multiply two groups."""
+    """A wrapper class for a linear representation that allows you to use the multiplication operator (*) to multiply two groups.
+
+    :ivar lin_rep: initial value: lin_rep
+    blahhhh
+    :ivar cosets: initial value: cosets
+
+    :ivar size: initial value: lin_rep.shape[2]
+    blah
+    
+    """
 
     def __init__(self, lin_rep, cosets=None):
 
         self.lin_rep = lin_rep
         if cosets:
-            #: A string containing the general positions (i.e. the actions on :math:`\\mathbb{R^3}`. 
             self.cosets = cosets
         else:
             self.cosets = cosets_from_lin_rep(lin_rep)
         self.cosets = cosets
-        """: The size of the group. 
-        """
         self.size = lin_rep.shape[2]
 
     def __str__(self):
