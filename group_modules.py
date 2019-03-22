@@ -131,7 +131,7 @@ class SpaceGroup:
     """A class to represent a space group by both a linear representation of :math:`\\frac{\\Gamma}{P1}` and the general positions (i.e. the actions on :math:`\\mathbb{R}^3`).
     
     :ivar num: The ITA number of the space group.
-    :ivar lin_rep: A LinRep object representing a fundamental domain of :math:`\\frac{\\Gamma}{P1}`.
+    :ivar lin_rep: A :class:LinRep object representing a fundamental domain of :math:`\\frac{\\Gamma}{P1}`.
     :ivar matrix: The affine transformation matrix used to conjugate the space group.
     """
 
@@ -718,6 +718,11 @@ def isNormal(B, G):
 
 
 def is_normal(sub, sup):
+    """Returns True if the subgroup is normal in the supergroup and False otherwise.
+
+    :param sub: A LinRep object representing the subgroup.
+    :param sup: A LinRep object representing the supergroup.
+    """
     return isNormal(sub.lin_rep, sup.lin_rep)
 
 # conjugates a group by a transformation
