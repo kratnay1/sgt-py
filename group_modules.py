@@ -98,7 +98,7 @@ class LinRep:
     :ivar lin_rep:  An n-element finite matrix group is represented as an numpy.ndarray with shape (4,4,n).  Each group element is represented as a 4x4 homogenous matrix of the form 
         :math:`{\\cal H}(A, {\\bf a}) = \\left(\\begin{array}{ccc}
         A && {\\bf a} \\\ \\\
-                {\\bf 0}^t && 1 \\end{array}\\right)` where :math:`A \\in GL(3, \\mathbb{R})` and {\\bf a} \\in \\mathbb{R}^3.`
+                {\\bf 0}^t && 1 \\end{array}\\right) where A \\in GL(3, \\mathbb{R}) and {\\bf a} \\in \\mathbb{R}^3.`
 
     :ivar cosets: The general positions (i.e. actions on :math:`\\mathbb{R}^3`).
     :ivar size: The size of the group.
@@ -128,16 +128,16 @@ class LinRep:
 
 
 class SpaceGroup:
-    """A class to represent a space group by both a linear representation of :math:`\\frac{\\Gamma}{P1}` and the general positions (i.e. the actions on :math:`\\mathbb{R}^3`)."""
+    """A class to represent a space group by both a linear representation of :math:`\\frac{\\Gamma}{P1}` and the general positions (i.e. the actions on :math:`\\mathbb{R}^3`).
+    
+    :ivar num: The ITA number of the space group.
+    :ivar lin_rep: A numpy.ndarray containing the homogenous transformation matrices of the group.
+    :ivar cosets: A string containing the general positions.
+    :ivar matrix: An affine transformation matrix used to conjugate the space group.
+    
+    """
 
     def __init__(self, num, lin_rep, cosets, matrix=None):
-        """Constructor.
-
-        :param num: The ITA number of the space group.
-        :param lin_rep: A numpy.ndarray containing the homogenous transformation matrices of the group.
-        :param cosets: A string containing the general positions.
-        :param matrix: An affine transformation matrix used to conjugate the space group.
-        """
         self.num = num
         self.lin_rep = LinRep(lin_rep, cosets[:-1])
         if not matrix:
@@ -146,6 +146,7 @@ class SpaceGroup:
             self.matrix = matrix
 
     def size(self):
+        """Returns the size of :math:`\\frac{\\Gamma}{P1}`"""
         return self.lin_rep.size
 
     def write_to_file(self, filename=None):

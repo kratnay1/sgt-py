@@ -79,10 +79,10 @@ Classes
        :members: 
 
    .. autoclass:: SpaceGroup
-      :members: __init__, write_to_file
+      :members: write_to_file
       
    .. autoclass:: SpaceGroupPair
-      :members: __init__, is_normal
+      :members: is_normal
 
 ==============================
 
@@ -90,7 +90,7 @@ Functions
 ==============================
 
 .. automodule:: group_modules
-   :members: get_space_group, get_space_subgroups, loadGroup, loadCosetRep 
+   :members: get_space_group, get_space_subgroups
 
 
 ===============================
