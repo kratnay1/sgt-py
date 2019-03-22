@@ -97,11 +97,7 @@ class LinRep:
 
     def __init__(self, lin_rep, cosets=None):
 
-        """Loads an n-element finite group as an numpy.ndarray with shape (4,4,n).  Each group element is represented as a 4x4 homogenous matrix of the form 
-            :math:`{\\cal H}(A, {\\bf a}) = \\left(\\begin{array}{ccc}
-            A && {\\bf a} \\\ \\\
-                 {\\bf 0}^t && 1 \\end{array}\\right)` where :math:`A \\in GL(3, \\mathbb{R})` and :math:`{\\bf a} \\in \\mathbb{R}^3.`
-        """
+        #: Loads an n-element finite group as an numpy.ndarray with shape (4,4,n).  Each group element is represented as a 4x4 homogenous matrix of the form :math:`{\\cal H}(A, {\\bf a}) = \\left(\\begin{array}{ccc} A && {\\bf a} \\\ \\\ {\\bf 0}^t && 1 \\end{array}\\right)` where :math:`A \\in GL(3, \\mathbb{R})` and :math:`{\\bf a} \\in \\mathbb{R}^3.`
         self.lin_rep = lin_rep
         if cosets:
             #: A string containing the general positions (i.e. the actions on :math:`\\mathbb{R^3}`. 
