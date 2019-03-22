@@ -27,6 +27,7 @@ class Group:
         self.supergroup = supergroup
         self.lin_rep = lin_rep
 
+
 class Subgroup:
     def __init__(self, num, normal=True, symmorphic=True):
         # num: ITA number
@@ -40,6 +41,7 @@ class Subgroup:
                and self.normal == other.normal
     def __hash__(self):
         return hash((self.num, self.normal))
+
 
 class Decomp:
     def __init__(self, gnum, bnum, matrix, sgroups):
@@ -128,20 +130,27 @@ class LinRep:
 
 
 class SpaceGroup:
-    """A class to represent a space group by both a linear representation of :math:`\\frac{\\Gamma}{P1}` and the general positions (i.e. the actions on :math:`\\mathbb{R}^3`).
+    """A class to represent a space group (:math:`\\Gamma`) by both a linear representation of :math:`\\frac{\\Gamma}{P1}` and the general positions (i.e. the actions on :math:`\\mathbb{R}^3`).
     
     :ivar num: The ITA number of the space group.
     :ivar lin_rep: A :class:`LinRep` object representing a fundamental domain of :math:`\\frac{\\Gamma}{P1}`.
     :ivar matrix: The affine transformation matrix used to conjugate the space group.
     """
 
-    def __init__(self, num, lin_rep, cosets, matrix=None):
+    def __init__(self, num, lin_rep, cosets=None, matrix=None):
         self.num = num
-        self.lin_rep = LinRep(lin_rep, cosets[:-1])
+        if not cosets:
+            self.lin_rep = LinRep(lin_rep)
+        else:
+            self.lin_rep = LinRep(lin_rep, cosets[:-1])
         if not matrix:
             self.matrix = id_matrix()
         else:
             self.matrix = matrix
+
+    def __str__(self):
+        print(self.lin_rep)
+
 
     def size(self):
         """Returns the size of a fundamental domain of :math:`\\frac{\\Gamma}{P1}`"""
@@ -153,14 +162,14 @@ class SpaceGroup:
         :param filename: A string containing the file name.
         """
         with open(filename, 'w') as file:
-            file.write(self.lin_rep.cosets)
+            file.write(self.lin_rep.cosets + '\n')
 
 
 class SpaceGroupPair:
     """A class to store a supgergroup-subgroup pair of space groups.
 
-    :ivar subgroup: A SpaceGroup object representing the subgroup.
-    :ivar supergroup: A SpaceGroup object representing the supergroup.
+    :ivar subgroup: A :class:`SpaceGroup` object representing the subgroup.
+    :ivar supergroup: A :class:`SpaceGroup` object representing the supergroup.
     :ivar matrix: The affine transformation that conjugates the supergroup to contain the subgroup.
     :ivar index: The index of the subgroup in the supergroup.
     """
@@ -180,7 +189,7 @@ class SpaceGroupPair:
     
 
 def get_space_group(gnum, matrix=None):
-    """Returns a SpaceGroup object given the ITA number and transformation matrix that relates the group and subgroup (:math:`P1`) basis.
+    """Returns a :class:`SpaceGroup` object given the ITA number and transformation matrix that relates the group and subgroup (:math:`P1`) basis.
 
     :param gnum: The group ITA number.
     :param matrix: The transformation matrix.
@@ -189,7 +198,7 @@ def get_space_group(gnum, matrix=None):
 
 
 def get_space_subgroups(supergroup, subgroup, index=None):
-    """Returns a list of SpaceGroupPair objects given a space group ITA number and a space subgroup ITA number for a given index or for all possible indices if no index is provided (stopping right before the index of the lattice translation group in the supergroup).
+    """Returns a list of :class:`SpaceGroupPair` objects given a space group ITA number and a space subgroup ITA number for a given index or for all possible indices if no index is provided (stopping right before the index of the lattice translation group in the supergroup).
 
     :param supergroup: The supergroup ITA number.
     :param subgroup: The subgroup ITA number.
@@ -352,14 +361,6 @@ def standardGenPos(group, mat=None, filename=None):
 
 
 def loadGroup(filename=None, coset_text=None):
-    # 
-    """Loads an n-element finite group as an numpy.ndarray with shape (4,4,n).  Each group element is represented as a 4x4 homogenous matrix of the form 
-        :math:`{\\cal H}(A, {\\bf a}) = \\left(\\begin{array}{ccc}
-        A && {\\bf a} \\\ \\\
-                {\\bf 0}^t && 1 \\end{array}\\right)` where :math:`A \\in GL(3, \\mathbb{R})` and :math:`{\\bf a} \\in \\mathbb{R}^3.`
-
-    :param filename: test
-    """
     if filename:
         with open(filename) as file:
             A = [line.split() for line in file]
@@ -373,6 +374,16 @@ def loadGroup(filename=None, coset_text=None):
         G[:,3,i] = G[:,3,i] % 1
         G[3,:,i] = [0, 0, 0, 1]
     return G
+
+
+def load_group_from_file(filename):
+    """Returns a :class:`LinRep` object from a file of coset representatives.
+
+    :param filename: A string containing the filename.
+    """
+    with open(filename, 'r') as file:
+        cosets = file.read()
+    return LinRep(loadGroup(None, cosets), cosets[:-1])
 
 
 def loadCosetRep(rep):
@@ -465,30 +476,7 @@ def id_matrix():
     return ['1','0','0','0','0','1','0','0','0','0','1','0']
 
 
-# load file with all {Gamma_B < (Gamma)^Z} for a given Gamma
-# returns a list of Group objects
-# def get_subgroups(filename):
-#     global symGroups
-#     symGroups = loadSymGroups()
-#     subgroups = []
-#     with open(filename, 'r') as file:
-#         while True:
-#             try:
-#                 num, index = file.readline().split()
-#             except ValueError:
-#                 break
-#             row1 = file.readline()
-#             row2 = file.readline()
-#             row3 = file.readline()
-#             mat = row1 + row2 + row3
-#             subgroups.append(Group(num, mat.split(), index))
-#             file.readline()
-#     return subgroups
-
-
 def get_subgroups(filename, supergroup_num):
-    # global biebGroups
-    # biebGroups = loadBiebGroups()
     space_group_pairs = []
     with open(filename, 'r') as file:
         while True:
@@ -720,8 +708,8 @@ def isNormal(B, G):
 def is_normal(sub, sup):
     """Returns True if the subgroup is normal in the supergroup and False otherwise.
 
-    :param sub: A LinRep object representing the subgroup.
-    :param sup: A LinRep object representing the supergroup.
+    :param sub: A :class:`LinRep` object representing the subgroup.
+    :param sup: A :class:`LinRep` object representing the supergroup.
     """
     return isNormal(sub.lin_rep, sup.lin_rep)
 
@@ -918,6 +906,10 @@ def getCosets(sup, sub, M=None, filename=None):
 
 
 def identify_group(generators):
+    """Identifies the minimal space group generated by a set of generators and returns the ITA number and the transformation matrix.
+
+    :param generators: A string containing a set of generators.
+    """
     data = {'tipog':'gesp', 'generators':generators}
     t = requests.post('http://www.cryst.ehu.es/cgi-bin/cryst/programs/checkgr.pl', data).text
     start = t.index('grupo') + 14
@@ -964,6 +956,13 @@ def removeNonBgroups():
 
 
 def get_sym_complements(gnum, bnum, mat, bsize):
+    """Returns a list of :class:`LinRep` objects representing all the complementary symmorphic groups (with size equal to the order of the supergroup divided by the order of the subgroup) that can be constructed from the coset decomposition of the supergroup with respect to the subgroup. 
+
+    :param gnum: The ITA number of the space group.
+    :param bnum: The ITA number of the Bieberbach subgroup.
+    :param mat: The matrix relating the subgroup and supergroup.
+    :param bsize: The size of the subgroup.
+    """
     getCosets(gnum, bnum, mat, 'dat_files/g_b_cosets')
     with open('dat_files/g_b_cosets') as file:
         A = [line.split() for line in file]
@@ -983,6 +982,13 @@ def get_sym_complements(gnum, bnum, mat, bsize):
 
 
 def get_bieb_complements(gnum, snum, mat, ssize):
+    """Returns a list of :class:`LinRep` objects representing all the complementary Bieberbach groups (with size equal to the order of the supergroup divided by the order of the subgroup) that can be constructed from the coset decomposition of the supergroup with respect to the subgroup. 
+
+    :param gnum: The ITA number of the space group.
+    :param snum: The ITA number of the subgroup.
+    :param mat: The matrix relating the subgroup and supergroup.
+    :param ssize: The size of the subgroup.
+    """
     getCosets(gnum, snum, mat, 'dat_files/g_s_cosets')
     with open('dat_files/g_s_cosets') as file:
         A = [line.split() for line in file]
@@ -1026,6 +1032,28 @@ def get_s_groups(subgroups):
             sgroups.append(S)
     return sgroups
  
+
+def get_all_bieb_groups():
+    """Returns a list of :class:`SpaceGroup` objects for all the Bieberbach space groups in their standard settings."""
+    B = loadBiebGroups()
+    bieb_groups = []
+    for num in B:
+        with open('dat_files/bieberbach_cosets/b{}.dat'.format(num), 'r') as file:
+            cosets = file.read()
+        bieb_groups.append(SpaceGroup(num, loadGroup(None, cosets), cosets))
+    return bieb_groups
+    
+
+def get_all_sym_groups():
+    """Returns a list of :class:`SpaceGroup` objects for all the symmorphic space groups in their standard settings."""
+    S = loadSymGroups()
+    sym_groups = []
+    for num in S:
+        with open('dat_files/symmorphic_cosets/s{}.dat'.format(num), 'r') as file:
+            cosets = file.read()
+        sym_groups.append(SpaceGroup(num, loadGroup(None, cosets), cosets))
+    return sym_groups
+
 
 def getFundDom(gnum, mat):
     getCosets(gnum, '1', mat, 'dat_files/coset_file')

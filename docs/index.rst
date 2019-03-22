@@ -90,7 +90,7 @@ Functions
 ==============================
 
 .. automodule:: group_modules
-   :members: get_space_group, get_space_subgroups
+   :members: get_space_group, get_space_subgroups, is_normal, load_group_from_file, get_bieb_complements, get_sym_complements, get_all_bieb_groups, get_all_sym_groups, identify_group
 
 
 ===============================
