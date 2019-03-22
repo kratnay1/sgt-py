@@ -93,14 +93,15 @@ class TableEntry:
 
 
 class LinRep:
-    """A wrapper class for a linear representation that allows you to use the multiplication operator (*) to multiply two groups.
+    """A class to represent a linear representation of a group.
 
-    :ivar lin_rep: lin_rep blahhhh
+    :ivar lin_rep:  An n-element finite matrix group is represented as an numpy.ndarray with shape (4,4,n).  Each group element is represented as a 4x4 homogenous matrix of the form 
+        :math:`{\\cal H}(A, {\\bf a}) = \\left(\\begin{array}{ccc}
+        A && {\\bf a} \\\ \\\
+                {\\bf 0}^t && 1 \\end{array}\\right)` where :math:`A \\in GL(3, \\mathbb{R})` and :math:`{\\bf a} \\in \\mathbb{R}^3.`
 
-    :cosets: cosets
-
-    :ivar size: initial value: lin_rep.shape[2]
-    blah
+    :ivar cosets: The general positions (i.e. actions on :math:`\\mathbb{R}^3`).
+    :ivar size: The size of the group.
     
     """
 
