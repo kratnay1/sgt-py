@@ -131,7 +131,7 @@ class SpaceGroup:
     """A class to represent a space group by both a linear representation of :math:`\\frac{\\Gamma}{P1}` and the general positions (i.e. the actions on :math:`\\mathbb{R}^3`).
     
     :ivar num: The ITA number of the space group.
-    :ivar lin_rep: A :class:LinRep object representing a fundamental domain of :math:`\\frac{\\Gamma}{P1}`.
+    :ivar lin_rep: A :class:`LinRep` object representing a fundamental domain of :math:`\\frac{\\Gamma}{P1}`.
     :ivar matrix: The affine transformation matrix used to conjugate the space group.
     """
 
